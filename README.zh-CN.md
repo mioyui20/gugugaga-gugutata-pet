@@ -2,6 +2,8 @@
 
 [English](README.md) | 简体中文
 
+[下载 Windows v1.1.0](https://github.com/mioyui20/gugugaga-pet/releases/download/v1.1.0/gugugaga-pet-Windows-x64.zip) · [全部版本](https://github.com/mioyui20/gugugaga-pet/releases) · [建议与反馈](https://github.com/mioyui20/gugugaga-pet/issues/new/choose)
+
 认识一下 **咕咕嘎嘎**，英文名 **guga**：一只穿着企鹅服的毛绒桌面伙伴。你打字、移动鼠标或停下来休息时，它都会用小动作和表情陪着你。
 
 ![咕咕嘎嘎敲键盘](docs/preview.png)
@@ -83,7 +85,7 @@ package.ps1             生成源码包与便携包
 
 ## 建议与反馈
 
-欢迎提出功能建议、外观意见和问题反馈。项目上传 GitHub 后，可从仓库的 **Issues** 页面选择 **功能建议 / Feature request** 或 **问题反馈 / Bug report**。项目已附上 `.github/ISSUE_TEMPLATE` 中英双语表单，方便统一收集、整理和跟进意见。
+欢迎提出功能建议、外观意见和问题反馈。前往项目的 [Issues](https://github.com/mioyui20/gugugaga-pet/issues/new/choose) 页面，选择 **功能建议 / Feature request** 或 **问题反馈 / Bug report**。项目已附上 `.github/ISSUE_TEMPLATE` 中英双语表单，方便统一收集、整理和跟进意见。
 
 提交功能建议时，建议说明：
 

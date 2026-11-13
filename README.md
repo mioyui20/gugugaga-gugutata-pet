@@ -2,6 +2,8 @@
 
 English | [简体中文](README.zh-CN.md)
 
+[Download Windows v1.1.0](https://github.com/mioyui20/gugugaga-pet/releases/download/v1.1.0/gugugaga-pet-Windows-x64.zip) · [All releases](https://github.com/mioyui20/gugugaga-pet/releases) · [Suggestions & feedback](https://github.com/mioyui20/gugugaga-pet/issues/new/choose)
+
 Meet **guga** — **咕咕嘎嘎** in Chinese — a plush penguin-costume desktop companion for Windows. Type, move your mouse, or take a break: guga keeps you company with little gestures and expressions.
 
 ![guga at the keyboard](docs/preview.png)
@@ -83,7 +85,7 @@ package.ps1             Create source and portable archives
 
 ## Suggestions and feedback
 
-Ideas and bug reports are welcome. Once this project is on GitHub, open its **Issues** tab and choose **Feature request / 功能建议** or **Bug report / 问题反馈**. Bilingual forms are included in `.github/ISSUE_TEMPLATE` to make feedback easier to collect and review.
+Ideas and bug reports are welcome. Open [Issues](https://github.com/mioyui20/gugugaga-pet/issues/new/choose) and choose **Feature request / 功能建议** or **Bug report / 问题反馈**. Bilingual forms are included in `.github/ISSUE_TEMPLATE` to make feedback easier to collect and review.
 
 For a feature suggestion, describe:
 
