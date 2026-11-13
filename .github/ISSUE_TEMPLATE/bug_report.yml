@@ -1,0 +1,37 @@
+name: 问题反馈 / Bug report
+description: 帮助我们复现并修复问题 / Help reproduce and fix a problem
+title: "[Bug] "
+body:
+  - type: input
+    id: app_version
+    attributes:
+      label: 软件版本 / App version
+      description: 查看设置页顶部 / Shown at the top of Settings.
+      placeholder: "1.1.0"
+    validations:
+      required: true
+  - type: input
+    id: windows_version
+    attributes:
+      label: Windows 版本 / Windows version
+      placeholder: "Windows 11 24H2, 64-bit"
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤 / Steps to reproduce
+      description: 从启动程序开始逐步描述 / Describe the steps from launching the app.
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: 预期与实际表现 / Expected and actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: attachments
+    attributes:
+      label: 截图或其他说明 / Screenshots or other details
+      description: 可选。上传前请去除私人信息。 / Optional. Remove private information before uploading.

@@ -1,0 +1,33 @@
+name: 功能建议 / Feature request
+description: 分享你希望咕咕嘎嘎改进的地方 / Suggest an improvement for guga
+title: "[Idea] "
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: 想改进什么？ / What would you improve?
+      description: 动作、表情、外观、交互或其他建议 / Gestures, expressions, appearance, interaction, or other ideas.
+    validations:
+      required: true
+  - type: textarea
+    id: scenario
+    attributes:
+      label: 使用场景与预期效果 / Context and desired behavior
+      description: 什么时候需要？希望看到什么效果？ / When would this help, and what should happen?
+    validations:
+      required: true
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 你认为的优先程度 / Your suggested priority
+      options:
+        - 体验优化 / Nice to have
+        - 经常需要 / Frequently needed
+        - 影响基本使用 / Essential to use
+    validations:
+      required: true
+  - type: textarea
+    id: references
+    attributes:
+      label: 草图、参考或补充 / Sketches, references, or other details
+      description: 可选。请勿上传私人信息。 / Optional. Please omit private information.
