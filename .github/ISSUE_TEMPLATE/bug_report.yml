@@ -7,7 +7,7 @@ body:
     attributes:
       label: 软件版本 / App version
       description: 查看设置页顶部 / Shown at the top of Settings.
-      placeholder: "1.1.0"
+      placeholder: "1.2.0"
     validations:
       required: true
   - type: input

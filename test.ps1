@@ -1,8 +1,8 @@
-param([string]$OutputDirectory)
+param([string]$OutputDirectory, [switch]$VideoModel = $true)
 $ErrorActionPreference = 'Stop'
 $root = $PSScriptRoot
 if ([string]::IsNullOrWhiteSpace($OutputDirectory)) { $OutputDirectory = $root }
-& (Join-Path $root 'build.ps1') -OutputDirectory $OutputDirectory
+& (Join-Path $root 'build.ps1') -OutputDirectory $OutputDirectory -VideoModel:$VideoModel
 $failure = Join-Path $OutputDirectory 'test-failure.txt'
 $results = Join-Path $OutputDirectory 'test-output\results.txt'
 if (Test-Path -LiteralPath $failure) { Remove-Item -LiteralPath $failure }

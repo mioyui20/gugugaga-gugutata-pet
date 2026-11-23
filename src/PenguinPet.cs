@@ -14,13 +14,13 @@ using System.Diagnostics;
 [assembly: AssemblyTitle("gugugaga pet")]
 [assembly: AssemblyProduct("gugugaga pet")]
 [assembly: AssemblyDescription("guga — 你的桌面伙伴")]
-[assembly: AssemblyVersion("1.1.0.0")]
-[assembly: AssemblyFileVersion("1.1.0.0")]
-[assembly: AssemblyInformationalVersion("1.1.0")]
+[assembly: AssemblyVersion("1.2.0.0")]
+[assembly: AssemblyFileVersion("1.2.0.0")]
+[assembly: AssemblyInformationalVersion("1.2.0")]
 
 namespace PenguinPet {
     static class Program {
-        public const string Version = "1.1.0";
+        public const string Version = "1.2.0";
         [STAThread] static void Main(string[] args) {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

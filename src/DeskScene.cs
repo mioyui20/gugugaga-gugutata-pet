@@ -3,24 +3,50 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace PenguinPet {
     // BongoCat standard-mode semantics: keyboard paw + independent pointer paw.
     // Articulated textures let both input streams animate at the same time.
     sealed class DeskScene : IDisposable {
-        readonly Bitmap[] parts;
+        const int CoatX = 98, CoatY = 184, CoatWidth = 225, CoatHeight = 82;
+        readonly Bitmap coat;
+        readonly bool videoModel;
         readonly Bitmap[] heads=new Bitmap[6];
         readonly FurTexture leftFur, rightFur;
         readonly List<KeyCap> keys = new List<KeyCap>();
         PointF leftTip = new PointF(251,262), rightTip = new PointF(93,249);
+        PointF mouseLean;
         double lastFrame = -1;
         sealed class KeyCap {
             public int Vk; public string Label; public RectangleF Rect;
             public KeyCap(int vk, string label, float x, float y, float w) { Vk=vk; Label=label; Rect=new RectangleF(x,y,w,12); }
         }
         public DeskScene(Bitmap[] images,Bitmap[] expressions) {
-            parts = images;
+            using (var bodyStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("PenguinPet.VideoBody"))
+            using (var faceStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("PenguinPet.VideoFaces")) {
+                videoModel = bodyStream != null && faceStream != null;
+                if (videoModel) {
+                    using (var body = new Bitmap(bodyStream))
+                    using (var faces = new Bitmap(faceStream))
+                    using (var mouseSleeve = faces.Clone(new Rectangle(1092, 596, 154, 354), PixelFormat.Format32bppPArgb))
+                    using (var keyboardSleeve = faces.Clone(new Rectangle(1317, 596, 151, 354), PixelFormat.Format32bppPArgb)) {
+                        coat = MakeVideoCoat(body);
+                        MakeVideoHeads(faces);
+                        leftFur = new FurTexture(keyboardSleeve);
+                        rightFur = new FurTexture(mouseSleeve);
+                    }
+                } else {
+                    coat = MakeCoat(images[0]);
+                    MakeClassicHeads(expressions);
+                    leftFur = new FurTexture(images[2]);
+                    rightFur = new FurTexture(images[3]);
+                }
+            }
+            AddKeys();
+        }
+        void MakeClassicHeads(Bitmap[] expressions) {
             for(int i=0;i<6;i++) {
                 heads[i]=new Bitmap(240,177,PixelFormat.Format32bppPArgb);
                 using(var hg=Graphics.FromImage(heads[i])) { hg.InterpolationMode=InterpolationMode.HighQualityBicubic; hg.DrawImage(expressions[i],new RectangleF(14,8,211,271)); }
@@ -34,7 +60,47 @@ namespace PenguinPet {
                 }
                 Marshal.Copy(pixels,0,data.Scan0,pixels.Length); heads[i].UnlockBits(data);
             }
-            leftFur=new FurTexture(parts[2]); rightFur=new FurTexture(parts[3]);
+        }
+        static Bitmap MakeVideoCoat(Bitmap body) {
+            var coat = new Bitmap(CoatWidth * 2, CoatHeight * 2, PixelFormat.Format32bppPArgb);
+            using (var g = Graphics.FromImage(coat)) {
+                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                // Register the collar and shoulders with the pose atlas.
+                var target = new RectangleF(18 * 2, (35 - CoatY) * 2, 190 * 2, 322 * 2);
+                g.DrawImage(body, target, new RectangleF(840, 41, 558, 950), GraphicsUnit.Pixel);
+            }
+            return coat;
+        }
+        void MakeVideoHeads(Bitmap atlas) {
+            int[] cells = { 2, 1, 0, 2, 3, 4 };
+            for (int i = 0; i < heads.Length; i++) {
+                int cell = cells[i];
+                heads[i] = new Bitmap(240, 218, PixelFormat.Format32bppPArgb);
+                using (var g = Graphics.FromImage(heads[i])) {
+                    g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                    var source = new RectangleF(cell % 3 * 512 + 36, cell / 3 * 512 + 18, 441, 466);
+                    g.DrawImage(atlas, new RectangleF(25, 6, 190, 201), source, GraphicsUnit.Pixel);
+                }
+                var data = heads[i].LockBits(new Rectangle(0, 0, 240, 218), ImageLockMode.ReadWrite, PixelFormat.Format32bppPArgb);
+                try {
+                    var pixels = new int[240 * 218];
+                    Marshal.Copy(data.Scan0, pixels, 0, pixels.Length);
+                    for (int y = 168; y < 218; y++) {
+                        for (int x = 0; x < 240; x++) {
+                            // Keep the clasp in the expression layer. The shoulder
+                            // contours come from the continuous torso texture.
+                            float outsideClasp = SmoothStep((Math.Abs(x - 120) - 27) / 35f);
+                            float fadeStart = 173 - 5 * outsideClasp;
+                            float fadeLength = 22 - 13 * outsideClasp;
+                            float opacity = 1 - SmoothStep((y - fadeStart) / fadeLength);
+                            pixels[y * 240 + x] = ScalePixel(pixels[y * 240 + x], opacity);
+                        }
+                    }
+                    Marshal.Copy(pixels, 0, data.Scan0, pixels.Length);
+                } finally { heads[i].UnlockBits(data); }
+            }
+        }
+        void AddKeys() {
             AddRow(244, new int[]{192,49,50,51,52,53,54,55,56,57,48,189,187,8}, new string[]{"`","1","2","3","4","5","6","7","8","9","0","-","=","←"});
             AddRow(259, new int[]{9,81,87,69,82,84,89,85,73,79,80,219,221,220}, new string[]{"Tab","Q","W","E","R","T","Y","U","I","O","P","[","]","\\"});
             AddRow(274, new int[]{20,65,83,68,70,71,72,74,75,76,186,222,13}, new string[]{"Caps","A","S","D","F","G","H","J","K","L",";","'","↵"});
@@ -53,6 +119,39 @@ namespace PenguinPet {
         static void Box(Graphics g, RectangleF r, Color fill, Color line, float rad) {
             using(var p=Round(r,rad)) using(var b=new SolidBrush(fill)) using(var pen=new Pen(line,1)) { g.FillPath(b,p); g.DrawPath(pen,p); }
         }
+        static Bitmap MakeCoat(Bitmap source) {
+            const int scale = 2;
+            int width = CoatWidth * scale, height = CoatHeight * scale;
+            var bounds = new Rectangle(0, 0, width, height);
+            var texture = new Bitmap(width, height, PixelFormat.Format32bppPArgb);
+            using (var graphics = Graphics.FromImage(texture)) {
+                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                graphics.DrawImage(source, new Rectangle(0, (49 - CoatY) * scale, width, 240 * scale));
+            }
+
+            // Widen the dark fabric at the mouse-side shoulder. Move the
+            // existing panel edge so fur detail and color stay continuous.
+            var fabric = new FurTexture(texture);
+            var pixels = new int[width * height];
+            for (int y = 0; y < height; y++) {
+                float row = CoatY + y / (float)scale;
+                float heightWeight = SmoothStep((row - 188) / 13) * (1 - SmoothStep((row - 207) / 23));
+                for (int x = 0; x < width; x++) {
+                    float column = CoatX + x / (float)scale;
+                    float widthWeight = SmoothStep((column - 135) / 37) * (1 - SmoothStep((column - 178) / 37));
+                    float offset = 16 * heightWeight * widthWeight * scale;
+                    pixels[y * width + x] = fabric.Sample(x - offset, y);
+                }
+            }
+            var data = texture.LockBits(bounds, ImageLockMode.WriteOnly, PixelFormat.Format32bppPArgb);
+            try { Marshal.Copy(pixels, 0, data.Scan0, pixels.Length); }
+            finally { texture.UnlockBits(data); }
+            return texture;
+        }
+        static float SmoothStep(float value) {
+            float t = Math.Max(0, Math.Min(1, value));
+            return t * t * (3 - 2 * t);
+        }
         public Bitmap Render(int width,int height,double time,bool sleep,bool paused,bool effects,float mx,float my,bool typing,int activeKey,bool leftButton,bool rightButton,bool wheel,Func<int,bool> held,bool preview,MotionFrame motion) {
             var output=new Bitmap(width,height,PixelFormat.Format32bppPArgb);
             using(var g=Graphics.FromImage(output)) {
@@ -62,32 +161,68 @@ namespace PenguinPet {
                 float breath=motion.Bob*.65f+rest*7;
                 PointF target = Plane(248,38); target.Y+=typing?1:-9;
                 if(typing) foreach(var key in keys) if(key.Vk==activeKey) { target=KeyboardPoint(key.Rect.X+key.Rect.Width/2,key.Rect.Y+6); target.Y+=2; break; }
-                if(!typing) target=Lerp(target,new PointF(235,251+motion.Breathing*.5f),rest);
-                // As in the reference: the viewer's left paw uses the mouse,
-                // the viewer's right paw types. Neither arm crosses the torso.
+                PointF keyboardRest = videoModel ? Plane(179,32) : new PointF(235,251);
+                keyboardRest.Y += motion.Breathing * .5f;
+                if (!typing) target = Lerp(target, keyboardRest, rest);
+                // The viewer's left paw uses the mouse; the right paw types.
                 float mu=77+mx*19, mv=47+my*12;
                 float press=leftButton||rightButton?2:0;
                 PointF mouseTarget=Plane(mu,mv-4); mouseTarget.Y+=press;
-                if(!leftButton&&!rightButton) mouseTarget=Lerp(mouseTarget,new PointF(160,239+motion.Breathing*.5f),rest);
+                PointF mouseRest = videoModel ? Plane(193,27) : new PointF(160,239);
+                mouseRest.Y += motion.Breathing * .5f;
+                if (!leftButton && !rightButton) mouseTarget = Lerp(mouseTarget, mouseRest, rest);
                 // Smooth the reach, rather than teleporting between distant keys.
-                float blend=lastFrame<0?1:(float)(1-Math.Exp(-Math.Max(0,Math.Min(.1,time-lastFrame))*25));
+                double frameTime = Math.Max(0, Math.Min(.1, time - lastFrame));
+                float blend = lastFrame < 0 ? 1 : (float)(1-Math.Exp(-frameTime*25));
                 PointF lp = preview?target:Lerp(leftTip,target,blend);
                 PointF rp = preview?mouseTarget:Lerp(rightTip,mouseTarget,blend);
-                if(!preview) { leftTip=lp; rightTip=rp; lastFrame=time; }
-                PointF ls=new PointF(259+mx,201+breath), rs=new PointF(153+mx,199+breath);
-                PointF le=new PointF(ls.X+(lp.X-ls.X)*.38f+9,ls.Y+(lp.Y-ls.Y)*.56f), re=new PointF(112+mx*3,220+breath);
+                // The dance reference shows the shoulder carrying the reach.
+                // Move the coat with it while keeping the paw on the device.
+                var neutralGrip = Plane(77,43);
+                var leanTarget = new PointF(
+                    (mouseTarget.X - neutralGrip.X) * .14f * (1 - rest),
+                    (mouseTarget.Y - neutralGrip.Y) * .12f * (1 - rest));
+                float leanBlend = lastFrame < 0 ? 1 : (float)(1 - Math.Exp(-frameTime * 34));
+                PointF lean = preview ? leanTarget : Lerp(mouseLean, leanTarget, leanBlend);
+                if(!preview) { leftTip=lp; rightTip=rp; mouseLean=lean; lastFrame=time; }
+                float coatX = mx + lean.X;
+                float coatY = breath + lean.Y;
+                PointF ls = new PointF((videoModel ? 250 : 259) + coatX, (videoModel ? 207 + rest * 7 : 201) + coatY);
+                PointF rs = new PointF((videoModel ? 171 : 164) + coatX, (videoModel ? 205 + rest * 6 : 197) + coatY);
+                PointF le = new PointF(ls.X + (lp.X - ls.X) * .38f + 9, ls.Y + (lp.Y - ls.Y) * .56f);
+                // Keep the upper sleeve close to the body's side before
+                // curving out toward the mouse or down into the resting paw.
+                PointF re = new PointF(
+                    rs.X + (rp.X - rs.X) * .61f - 5 * (1 - rest),
+                    rs.Y + (rp.Y - rs.Y) * .43f + 3);
+                if (videoModel) {
+                    le = Lerp(le, new PointF(267 + coatX, 254), rest);
+                    re = Lerp(re, new PointF(150 + coatX, 250), rest);
+                }
                 // Body stays behind the desk; no pose-swapping of the whole character.
                 var save=g.Save();
                 // The torso artwork includes broad coat-side lobes. Tuck those
                 // inside the shoulders so they cannot read as a second sleeve.
                 using(var torso=new GraphicsPath()) {
-                    torso.AddBezier(151,188+breath,170,185+breath,245,186+breath,264,193+breath);
-                    torso.AddLine(264,193+breath,273,250); torso.AddLine(273,250,140,236); torso.CloseFigure();
+                    if (videoModel) {
+                        // The video torso already has an armless shoulder contour.
+                        // Keep it behind the sleeve across the whole joint.
+                        torso.AddLine(129 + coatX, 188 + coatY, 258 + coatX, 188 + coatY);
+                        torso.AddBezier(258 + coatX, 188 + coatY, 270 + coatX, 208 + coatY, 269 + coatX, 239 + coatY, 263 + coatX, 264 + coatY);
+                        torso.AddLine(263 + coatX, 264 + coatY, 143 + coatX, 264 + coatY);
+                        torso.CloseFigure();
+                    } else {
+                        torso.AddBezier(151+coatX,188+coatY,170+coatX,185+coatY,245+coatX,186+coatY,264+coatX,193+coatY);
+                        torso.AddLine(264+coatX,193+coatY,273+coatX,251+coatY);
+                        torso.AddLine(273+coatX,251+coatY,275+coatX,263+coatY);
+                        torso.AddLine(275+coatX,263+coatY,140+coatX,249+coatY);
+                        torso.CloseFigure();
+                    }
                     g.SetClip(torso);
                 }
                 // A short, broad upper torso tucked behind the desktop replaces
                 // the upright full-belly pose. The head leans over the devices.
-                g.DrawImage(parts[0],new RectangleF(98+mx,49+breath,225,240)); g.Restore(save);
+                g.DrawImage(coat,new RectangleF(CoatX+coatX,CoatY+coatY,CoatWidth,CoatHeight)); g.Restore(save);
                 Surface(g,0,0,380,95,Color.FromArgb(243,46,53,63),Color.FromArgb(170,130,146,161),0);
                 Surface(g,8,12,139,76,Color.FromArgb(255,68,79,93),Color.FromArgb(160,116,136,155),1);
                 DrawKeyboard(g,typing,activeKey,paused,held);
@@ -95,18 +230,24 @@ namespace PenguinPet {
                     using(var pen=new Pen(Color.FromArgb(40,125,211,225),1)) g.DrawLine(pen,Plane(77,47),Plane(mu,mv));
                 }
                 DrawMouse(g,mu,mv,press,leftButton,rightButton,wheel);
-                // Roots now sit within the coat; drawing the whole soft sleeve
-                // avoids the hard cut edge of the earlier forearm-only layer.
-                Arm(g,leftFur,ls,le,lp,39,0);
-                Arm(g,rightFur,rs,re,rp,38,0);
+                // Keep the original rounded flipper silhouettes. Bury the
+                // mouse-side root beneath the collar instead of fading its
+                // exposed fabric and letting the desktop show through.
+                if (videoModel && rest > 0) {
+                    DrawRestShadow(g, lp, rest);
+                    DrawRestShadow(g, rp, rest);
+                }
+                Arm(g,leftFur,ls,le,lp,videoModel ? 35 + rest * 2 : 39,videoModel);
+                Arm(g,rightFur,rs,re,rp,videoModel ? 35 + rest * 2 : 38,videoModel);
                 // In a doze the cheek rests above the relaxed paws and desktop,
                 // rather than getting clipped by the desk's rear edge.
-                float drop=rest*27+motion.Nod*6;
+                float drop=rest*(videoModel ? 31 : 27)+motion.Nod*(videoModel ? 3 : 6);
                 save=g.Save();
                 float pivotY=195+breath+drop;
                 g.TranslateTransform(209+mx,pivotY); g.RotateTransform(motion.Tilt*.65f+1.5f);
                 g.ScaleTransform(1+rest*.014f,1-rest*.035f-motion.Nod*.012f); g.TranslateTransform(-(209+mx),-pivotY);
-                var headRect=new Rectangle(90+(int)mx,29+(int)(breath+drop),240,177);
+                g.TranslateTransform(mx + lean.X * .6f, breath + drop + lean.Y * .6f);
+                var headRect=new Rectangle(90,29,240,heads[0].Height);
                 if(motion.FaceBlend<1) DrawHead(g,heads[motion.PreviousFace],headRect,1);
                 DrawHead(g,heads[motion.Face],headRect,motion.FaceBlend);
                 if(effects&&sleep&&!paused&&rest>.5f) {
@@ -127,6 +268,16 @@ namespace PenguinPet {
                 if(paused) using(var font=new Font("Microsoft YaHei UI",9)) using(var brush=new SolidBrush(Color.FromArgb(230,217,230,239))) g.DrawString(Ui.Text("已暂停"),font,brush,294,300);
             }
             return output;
+        }
+        static void DrawRestShadow(Graphics g, PointF paw, float rest) {
+            using (var outline = new GraphicsPath()) {
+                outline.AddEllipse(paw.X - 17, paw.Y - 7, 34, 15);
+                using (var shadow = new PathGradientBrush(outline)) {
+                    shadow.CenterColor = Color.FromArgb((int)(100 * rest), 20, 17, 23);
+                    shadow.SurroundColors = new[] { Color.FromArgb(0, 20, 17, 23) };
+                    g.FillPath(shadow, outline);
+                }
+            }
         }
         // One affine desktop plane is shared by the pad, mouse, keyboard and
         // paw contact points. Device textures face the character (180 degrees).
@@ -177,7 +328,7 @@ namespace PenguinPet {
                 g.DrawImage(head,rect,0,0,head.Width,head.Height,GraphicsUnit.Pixel,attributes);
             }
         }
-        public void Dispose() { foreach(var head in heads) head.Dispose(); }
+        public void Dispose() { coat.Dispose(); foreach(var head in heads) head.Dispose(); }
         static PointF Lerp(PointF a,PointF b,float t) { return new PointF(a.X+(b.X-a.X)*t,a.Y+(b.Y-a.Y)*t); }
         static PointF Curve(PointF a,PointF control,PointF b,float t) {
             float s=1-t; return new PointF(s*s*a.X+2*s*t*control.X+t*t*b.X,s*s*a.Y+2*s*t*control.Y+t*t*b.Y);
@@ -187,14 +338,20 @@ namespace PenguinPet {
             float dy=2*((1-t)*(control.Y-a.Y)+t*(b.Y-control.Y));
             float len=Math.Max(.001f,(float)Math.Sqrt(dx*dx+dy*dy)); return new PointF(dy/len,-dx/len);
         }
-        static void Arm(Graphics g,FurTexture fur,PointF shoulder,PointF elbow,PointF tip,float width,float from) {
+        static int ScalePixel(int pixel, float opacity) {
+            int result = 0;
+            for (int shift = 0; shift < 32; shift += 8)
+                result |= (int)(((pixel >> shift) & 255) * opacity) << shift;
+            return result;
+        }
+        static void Arm(Graphics g,FurTexture fur,PointF shoulder,PointF elbow,PointF tip,float width,bool videoModel) {
             // Rasterize shared-edge triangles, rather than independent GDI strips:
             // strip interpolation leaves dotted seams on the plush at deep bends.
             const int strips=28;
             PointF[] left=new PointF[strips+1],right=new PointF[strips+1];
             float minX=400,minY=328,maxX=0,maxY=0;
             for(int i=0;i<=strips;i++) {
-                float t=from+(1-from)*i/strips;
+                float t=i/(float)strips;
                 PointF p=Curve(shoulder,elbow,tip,t),n=Normal(shoulder,elbow,tip,t); float half=width*(1-.12f*t)/2;
                 left[i]=new PointF(p.X-n.X*half,p.Y-n.Y*half); right[i]=new PointF(p.X+n.X*half,p.Y+n.Y*half);
                 minX=Math.Min(minX,Math.Min(left[i].X,right[i].X)); maxX=Math.Max(maxX,Math.Max(left[i].X,right[i].X));
@@ -204,10 +361,10 @@ namespace PenguinPet {
             int w=(int)Math.Ceiling(maxX)-ox+3,h=(int)Math.Ceiling(maxY)-oy+3;
             int[] pixels=new int[w*h];
             for(int i=0;i<strips;i++) {
-                float v0=(from+(1-from)*i/strips)*(fur.Height-1),v1=(from+(1-from)*(i+1)/strips)*(fur.Height-1);
+                float v0=i/(float)strips,v1=(i+1)/(float)strips;
                 PointF a=Offset(left[i],ox,oy),b=Offset(right[i],ox,oy),c=Offset(right[i+1],ox,oy),d=Offset(left[i+1],ox,oy);
-                Triangle(pixels,w,h,fur,a,b,c,new PointF(0,v0),new PointF(fur.Width-1,v0),new PointF(fur.Width-1,v1));
-                Triangle(pixels,w,h,fur,a,c,d,new PointF(0,v0),new PointF(fur.Width-1,v1),new PointF(0,v1));
+                Triangle(pixels,w,h,fur,a,b,c,new PointF(0,v0),new PointF(1,v0),new PointF(1,v1),videoModel);
+                Triangle(pixels,w,h,fur,a,c,d,new PointF(0,v0),new PointF(1,v1),new PointF(0,v1),videoModel);
             }
             using(var b=new Bitmap(w,h,PixelFormat.Format32bppPArgb)) {
                 var data=b.LockBits(new Rectangle(0,0,w,h),ImageLockMode.WriteOnly,PixelFormat.Format32bppPArgb);
@@ -216,7 +373,7 @@ namespace PenguinPet {
             }
         }
         static PointF Offset(PointF p,int x,int y) { return new PointF(p.X-x,p.Y-y); }
-        static void Triangle(int[] dst,int w,int h,FurTexture tex,PointF a,PointF b,PointF c,PointF ua,PointF ub,PointF uc) {
+        static void Triangle(int[] dst,int w,int h,FurTexture tex,PointF a,PointF b,PointF c,PointF ua,PointF ub,PointF uc,bool videoModel) {
             float det=(b.X-a.X)*(c.Y-a.Y)-(b.Y-a.Y)*(c.X-a.X); if(Math.Abs(det)<.0001f) return;
             int x0=Math.Max(0,(int)Math.Floor(Math.Min(a.X,Math.Min(b.X,c.X)))),x1=Math.Min(w-1,(int)Math.Ceiling(Math.Max(a.X,Math.Max(b.X,c.X))));
             int y0=Math.Max(0,(int)Math.Floor(Math.Min(a.Y,Math.Min(b.Y,c.Y)))),y1=Math.Min(h-1,(int)Math.Ceiling(Math.Max(a.Y,Math.Max(b.Y,c.Y))));
@@ -224,7 +381,18 @@ namespace PenguinPet {
                 float dx=x+.5f-a.X,dy=y+.5f-a.Y;
                 float wb=(dx*(c.Y-a.Y)-dy*(c.X-a.X))/det,wc=((b.X-a.X)*dy-(b.Y-a.Y)*dx)/det,wa=1-wb-wc;
                 if(wa<-.00001f||wb<-.00001f||wc<-.00001f) continue;
-                dst[y*w+x]=tex.Sample(wa*ua.X+wb*ub.X+wc*uc.X,wa*ua.Y+wb*ub.Y+wc*uc.Y);
+                float along = wa * ua.Y + wb * ub.Y + wc * uc.Y;
+                float across = wa * ua.X + wb * ub.X + wc * uc.X;
+                int pixel = tex.Sample(across * (tex.Width - 1), (videoModel ? .18f + .82f * along : along) * (tex.Height - 1));
+                // Fade the mesh cut only inside the matte black shoulder.
+                // Gently shade the root to reduce the baked light on the seam.
+                if (videoModel && along < .38f) {
+                    float join = SmoothStep(along / .38f);
+                    int alpha = (int)((uint)pixel >> 24);
+                    pixel = (ScalePixel(pixel, .77f + .23f * join) & 0x00ffffff) | (alpha << 24);
+                    if (along < .065f) pixel = ScalePixel(pixel, SmoothStep(along / .065f));
+                }
+                dst[y*w+x] = pixel;
             }
         }
         sealed class FurTexture {

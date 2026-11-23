@@ -11,7 +11,7 @@ foreach ($folder in @('src','assets','docs')) { New-Item -ItemType Directory -Pa
 foreach ($file in @('.gitignore','README.md','README.zh-CN.md','app.manifest','build.ps1','test.ps1','package.ps1')) { Copy-Item -LiteralPath (Join-Path $root $file) -Destination $source -Force }
 Get-ChildItem -LiteralPath (Join-Path $root 'src') -Filter '*.cs' | Copy-Item -Destination (Join-Path $source 'src') -Force
 Copy-Item -LiteralPath (Join-Path $root '.github') -Destination $source -Recurse -Force
-foreach ($file in @('penguin-rig.png','penguin-expressions.png','rig-generation.txt','expression-generation.txt')) { Copy-Item -LiteralPath (Join-Path $root "assets\$file") -Destination (Join-Path $source 'assets') -Force }
+foreach ($file in @('penguin-rig.png','penguin-expressions.png','rig-generation.txt','expression-generation.txt','guga-video-body.png','guga-video-faces.png','guga-video-generation.txt')) { Copy-Item -LiteralPath (Join-Path $root "assets\$file") -Destination (Join-Path $source 'assets') -Force }
 Get-ChildItem -LiteralPath (Join-Path $root 'docs') -Filter '*.png' | Copy-Item -Destination (Join-Path $source 'docs') -Force
 Copy-Item -LiteralPath $ExecutablePath -Destination (Join-Path $portable 'gugugaga pet.exe') -Force
 foreach ($file in @('README.md','README.zh-CN.md')) { Copy-Item -LiteralPath (Join-Path $root $file) -Destination $portable -Force }

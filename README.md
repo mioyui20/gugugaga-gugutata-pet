@@ -2,9 +2,9 @@
 
 English | [简体中文](README.zh-CN.md)
 
-[Download Windows v1.1.0](https://github.com/mioyui20/gugugaga-pet/releases/download/v1.1.0/gugugaga-pet-Windows-x64.zip) · [All releases](https://github.com/mioyui20/gugugaga-pet/releases) · [Suggestions & feedback](https://github.com/mioyui20/gugugaga-pet/issues/new/choose)
+[Download Windows v1.2.0](https://github.com/mioyui20/gugugaga-gugutata-pet/releases/download/v1.2.0/gugugaga-pet-Windows-x64.zip) · [All releases](https://github.com/mioyui20/gugugaga-gugutata-pet/releases) · [Suggestions & feedback](https://github.com/mioyui20/gugugaga-gugutata-pet/issues/new/choose)
 
-Meet **guga** — **咕咕嘎嘎** in Chinese — a plush penguin-costume desktop companion for Windows. Type, move your mouse, or take a break: guga keeps you company with little gestures and expressions.
+Meet **guga**, known as **咕咕嘎嘎** in Chinese, a desktop companion in a penguin suit for Windows. Guga taps along as you type, follows your mouse, and takes a nap when you step away.
 
 ![guga at the keyboard](docs/preview.png)
 
@@ -13,7 +13,7 @@ Meet **guga** — **咕咕嘎嘎** in Chinese — a plush penguin-costume deskto
 - **Typing companion:** the keyboard paw moves toward the corresponding key, presses down, and lifts on release. Common letter, number, punctuation, and modifier keys light up on the miniature keyboard.
 - **Mouse companion:** the other paw follows the pointer across a small mouse pad. Mouse buttons and scrolling have their own feedback; typing and mouse movement work together.
 - **Expressive reactions:** calm, blinking, happy, focused, sleepy, and surprised expressions, with gentle breathing and head movement.
-- **A proper little nap:** after 45 seconds without input, guga settles onto relaxed paws, breathes slowly, and occasionally nods and rebounds. New input wakes guga and restores normal interaction.
+- **A proper little nap:** after 45 seconds without input, guga brings both forearms together on the desk and lowers its head onto them. Slow breathing and small nods continue until new input wakes guga.
 - **Desktop controls:** drag to move, click to pet, and use the right-click menu for size, opacity, always-on-top, click-through, hiding, and position recovery.
 - **English and Chinese:** open Settings and click the visible **中文** or **English** button at the top, or choose **语言 / Language → English / 中文** in the right-click menu. The selected language is remembered on normal exit.
 
@@ -27,7 +27,7 @@ Requires **64-bit Windows 10 or 11** with **.NET Framework 4.8**. No Python, Nod
 2. Run `gugugaga pet.exe`.
 3. Right-click the pet or its tray icon for controls. A fresh installation starts in Chinese. Open **设置与使用说明** and click the **English** button at the top; settings, menus, and tray text update immediately.
 
-If the language buttons are missing, close the older pet and launch the EXE from the latest portable package. The version is shown at the top of Settings; this update is **v1.1.0**.
+To upgrade, exit the previous copy and run the EXE from the new portable package. **v1.2.0** appears at the top of Settings.
 
 | Action | Result |
 | --- | --- |
@@ -57,7 +57,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\build.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File .\test.ps1
 ```
 
-The build uses the Windows .NET Framework C# compiler and embeds both texture atlases in the executable. `PenguinPet.exe` is also generated as a compatibility entry point for older shortcuts.
+The build uses the Windows .NET Framework C# compiler and embeds the character textures in the executable. Pass `-VideoModel:$false` to build with the previous design. `PenguinPet.exe` is also generated as a compatibility entry point for older shortcuts.
 
 The self-test checks window visibility, hook registration, key states, expressions, resting and wake transitions, pause, click-through, resizing, hiding, recovery, and both languages. Pose previews are saved in `test-output`. It does not inject input into other apps. To check global interaction manually, type in a text editor, move the pointer, click, and scroll while watching the pet.
 
@@ -85,7 +85,7 @@ package.ps1             Create source and portable archives
 
 ## Suggestions and feedback
 
-Ideas and bug reports are welcome. Open [Issues](https://github.com/mioyui20/gugugaga-pet/issues/new/choose) and choose **Feature request / 功能建议** or **Bug report / 问题反馈**. Bilingual forms are included in `.github/ISSUE_TEMPLATE` to make feedback easier to collect and review.
+Ideas and bug reports are welcome. Open [Issues](https://github.com/mioyui20/gugugaga-gugutata-pet/issues/new/choose) and choose **Feature request / 功能建议** or **Bug report / 问题反馈**. Bilingual forms are included in `.github/ISSUE_TEMPLATE` to make feedback easier to collect and review.
 
 For a feature suggestion, describe:
 

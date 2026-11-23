@@ -2,9 +2,9 @@
 
 [English](README.md) | 简体中文
 
-[下载 Windows v1.1.0](https://github.com/mioyui20/gugugaga-pet/releases/download/v1.1.0/gugugaga-pet-Windows-x64.zip) · [全部版本](https://github.com/mioyui20/gugugaga-pet/releases) · [建议与反馈](https://github.com/mioyui20/gugugaga-pet/issues/new/choose)
+[下载 Windows v1.2.0](https://github.com/mioyui20/gugugaga-gugutata-pet/releases/download/v1.2.0/gugugaga-pet-Windows-x64.zip) · [全部版本](https://github.com/mioyui20/gugugaga-gugutata-pet/releases) · [建议与反馈](https://github.com/mioyui20/gugugaga-gugutata-pet/issues/new/choose)
 
-认识一下 **咕咕嘎嘎**，英文名 **guga**：一只穿着企鹅服的毛绒桌面伙伴。你打字、移动鼠标或停下来休息时，它都会用小动作和表情陪着你。
+**咕咕嘎嘎**（英文名 **guga**）是一只穿着企鹅服的 Windows 桌面伙伴。它会跟着你敲键盘、移动鼠标，等你休息时也趴下来打个盹。
 
 ![咕咕嘎嘎敲键盘](docs/preview.png)
 
@@ -13,7 +13,7 @@
 - **陪你敲键盘：** 敲键盘的手平滑移动到对应按键，按下时落手，松开后抬手。迷你键盘上的常见字母、数字、标点和修饰键同步亮起。
 - **陪你移动鼠标：** 另一只手握着小鼠标，在鼠标垫范围内跟随指针；点击和滚轮都有反馈，打字与握鼠动作可以同时进行。
 - **表情与小动作：** 平静、眨眼、开心、专注、困倦、惊讶六种表情，配合轻微呼吸和头部动作。
-- **趴着打个盹：** 45 秒无操作后收拢双手、缓缓伏低，随着呼吸起伏，偶尔困得点一下头再回弹；重新操作键鼠即可唤醒。
+- **趴着打个盹：** 45 秒无操作后，两只前臂收拢伏在桌上，脑袋慢慢靠下来。睡着时会轻轻呼吸和点头，重新操作键鼠即可唤醒。
 - **桌面控制：** 支持拖动、摸摸头、大小与透明度调整、置顶、鼠标穿透、隐藏和位置恢复。
 - **英中双语：** 点击设置页顶部直接可见的 **中文 / English** 按钮，也可以从右键菜单切换。正常退出后会记住语言偏好；中文名为“咕咕嘎嘎”，英文名为“guga”。
 
@@ -27,7 +27,7 @@
 2. 双击 `gugugaga pet.exe`。
 3. 右键宠物或系统托盘图标，打开 **设置与使用说明**，点击顶部的 **English** 按钮，设置、菜单及托盘文字会立即切换英文。首次运行默认中文。
 
-如果找不到语言按钮，请退出旧宠物，运行最新版便携包内的 EXE。设置页顶部显示版本号，本次更新为 **v1.1.0**。
+升级时请先退出旧版，再运行新便携包里的 EXE。设置页顶部会显示 **v1.2.0**。
 
 | 操作 | 效果 |
 | --- | --- |
@@ -46,7 +46,7 @@
 
 本次启动的操作次数只保留在内存中。配置保存在 `%LOCALAPPDATA%\PenguinPet\settings.json`，沿用该目录名以兼容旧设置。保存的偏好包括大小、不透明度、位置、置顶、特效和语言；隐藏及穿透状态在下次启动时重置。程序不会安装后台服务，也不会自动设置开机启动。
 
-锁屏、UAC 安全桌面及部分受保护应用中可能无法响应输入。角色使用分层精灵和毛绒手臂变形，并非 Live2D 模型；迷你键盘展示的是完整实体键盘的一部分。
+锁屏、UAC 安全桌面及部分受保护应用中可能无法响应输入。角色使用分层精灵与纹理变形。迷你键盘展示了实体键盘上的常用键位。
 
 ## 构建与测试
 
@@ -57,7 +57,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\build.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File .\test.ps1
 ```
 
-构建使用 Windows 自带的 .NET Framework C# 编译器，将两张纹理图集嵌入 EXE。同时生成 `PenguinPet.exe` 作为旧快捷方式的兼容入口。
+构建使用 Windows 自带的 .NET Framework C# 编译器，将角色纹理嵌入 EXE。构建时传入 `-VideoModel:$false` 可使用上一套造型。脚本也会生成 `PenguinPet.exe`，方便旧快捷方式继续使用。
 
 自检覆盖窗口可见性、钩子注册、按键状态、表情、趴睡与唤醒、暂停、穿透、缩放、隐藏、位置恢复和英中双语界面，并在 `test-output` 生成姿态预览。自检不会向其他应用注入键鼠输入。手动检查全局联动时，可在文本编辑器里打字，并移动鼠标、点击、滚动，观察宠物的回应。
 
@@ -73,7 +73,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\package.ps1
 
 ```text
 src/PenguinPet.cs       窗口、输入状态、设置及托盘控制
-src/DeskScene.cs        透视桌面和毛绒手臂绘制
+src/DeskScene.cs        透视桌面和手臂绘制
 src/CompanionMotion.cs  表情、呼吸、趴睡和唤醒动作
 src/Ui.cs               中英文界面文字
 assets/                 运行所需图集与素材生成记录
@@ -85,7 +85,7 @@ package.ps1             生成源码包与便携包
 
 ## 建议与反馈
 
-欢迎提出功能建议、外观意见和问题反馈。前往项目的 [Issues](https://github.com/mioyui20/gugugaga-pet/issues/new/choose) 页面，选择 **功能建议 / Feature request** 或 **问题反馈 / Bug report**。项目已附上 `.github/ISSUE_TEMPLATE` 中英双语表单，方便统一收集、整理和跟进意见。
+欢迎提出功能建议、外观意见和问题反馈。前往项目的 [Issues](https://github.com/mioyui20/gugugaga-gugutata-pet/issues/new/choose) 页面，选择 **功能建议 / Feature request** 或 **问题反馈 / Bug report**。项目已附上 `.github/ISSUE_TEMPLATE` 中英双语表单，方便统一收集、整理和跟进意见。
 
 提交功能建议时，建议说明：
 
