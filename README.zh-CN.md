@@ -1,102 +1,39 @@
-# gugugaga pet
+# 咕咕嘎嘎桌宠
 
-[English](README.md) | 简体中文
+[English](README.md) · [下载 Windows 便携版](https://github.com/mioyui20/gugugaga-gugutata-pet/releases/latest/download/gugugaga-pet-Windows-x64.zip)
 
-[下载 Windows v1.2.0](https://github.com/mioyui20/gugugaga-gugutata-pet/releases/download/v1.2.0/gugugaga-pet-Windows-x64.zip) · [全部版本](https://github.com/mioyui20/gugugaga-gugutata-pet/releases) · [建议与反馈](https://github.com/mioyui20/gugugaga-gugutata-pet/issues/new/choose)
+咕咕嘎嘎（guga）是一只穿着企鹅服的 Windows 桌宠。你敲键盘，它也跟着敲。你移动鼠标，它的小手也会跟着动。你离开一会儿，它就趴在桌上打盹。
 
-**咕咕嘎嘎**（英文名 **guga**）是一只穿着企鹅服的 Windows 桌面伙伴。它会跟着你敲键盘、移动鼠标，等你休息时也趴下来打个盹。
+![咕咕嘎嘎在迷你键盘前](docs/preview.png)
 
-![咕咕嘎嘎敲键盘](docs/preview.png)
+## 下载后怎么打开
 
-## 功能
+需要 **64 位 Windows 10 或 11** 和 **.NET Framework 4.8**。解压即可运行，普通用户权限就够用。
 
-- **陪你敲键盘：** 敲键盘的手平滑移动到对应按键，按下时落手，松开后抬手。迷你键盘上的常见字母、数字、标点和修饰键同步亮起。
-- **陪你移动鼠标：** 另一只手握着小鼠标，在鼠标垫范围内跟随指针；点击和滚轮都有反馈，打字与握鼠动作可以同时进行。
-- **表情与小动作：** 平静、眨眼、开心、专注、困倦、惊讶六种表情，配合轻微呼吸和头部动作。
-- **趴着打个盹：** 45 秒无操作后，两只前臂收拢伏在桌上，脑袋慢慢靠下来。睡着时会轻轻呼吸和点头，重新操作键鼠即可唤醒。
-- **桌面控制：** 支持拖动、摸摸头、大小与透明度调整、置顶、鼠标穿透、隐藏和位置恢复。
-- **英中双语：** 点击设置页顶部直接可见的 **中文 / English** 按钮，也可以从右键菜单切换。正常退出后会记住语言偏好；中文名为“咕咕嘎嘎”，英文名为“guga”。
+1. 下载并解压 `gugugaga-pet-Windows-x64.zip`。
+2. 双击 `gugugaga pet.exe`，试试打字或移动鼠标。
+3. 右键桌宠或系统托盘图标，打开 **设置与使用说明**。默认中文，也可以在设置顶部切换 **English**。
 
-![咕咕嘎嘎趴睡](docs/sleep.png)
+升级时先从托盘退出旧版，再解压并运行新版。[查看全部版本](https://github.com/mioyui20/gugugaga-gugutata-pet/releases)
 
-## 在 Windows 上运行
-
-需要 **64 位 Windows 10 或 11** 和 **.NET Framework 4.8**。无需安装 Python、Node.js，也不需要安装器或管理员权限。
-
-1. 解压 `gugugaga-pet-Windows-x64.zip`。
-2. 双击 `gugugaga pet.exe`。
-3. 右键宠物或系统托盘图标，打开 **设置与使用说明**，点击顶部的 **English** 按钮，设置、菜单及托盘文字会立即切换英文。首次运行默认中文。
-
-升级时请先退出旧版，再运行新便携包里的 EXE。设置页顶部会显示 **v1.2.0**。
+## 可以怎么玩
 
 | 操作 | 效果 |
 | --- | --- |
-| 拖动宠物 | 移动窗口 |
-| 单击宠物 | 摸摸头，露出微笑 |
-| 右键 | 打开控制与语言菜单 |
-| **让咕咕嘎嘎打个盹** | 立即预览趴睡；操作键鼠即可唤醒 |
-| 双击托盘图标 | 显示宠物并摸摸头 |
-| 再次运行 EXE | 恢复现有宠物的显示、关闭穿透并重置位置 |
+| 打字、点击或滚动 | 咕咕嘎嘎会用小手和迷你键鼠做出相应动作 |
+| 45 秒无操作 | 趴下打盹，下次操作键鼠时醒来 |
+| 拖动或轻点桌宠 | 拖动调整位置，轻点摸摸头看它微笑 |
+| 右键桌宠 | 调整大小、透明度、置顶、语言或显示状态，也能立即打盹 |
+| 开启鼠标穿透 | 点击桌宠下方的窗口，从托盘菜单关闭穿透 |
 
-大小可调为 160–440 px，不透明度可调为 35%–100%。开启鼠标穿透后，从托盘菜单关闭；图标也可能位于系统托盘的折叠区域中。
+![咕咕嘎嘎趴在桌上打盹](docs/sleep.png)
 
-## 隐私与设置
+找不到桌宠时，可以从系统托盘恢复，图标可能在折叠区域。再次双击 EXE 也可显示桌宠并恢复位置。
 
-程序离线运行，不发起网络请求。Windows 输入钩子提供临时的键码、按下/松开状态及鼠标坐标，仅用于驱动动画；不会将键码转换成输入文字，不保存输入日志，不上传数据，也不读取剪贴板。输入事件始终放行给其他应用。
+## 隐私与反馈
 
-本次启动的操作次数只保留在内存中。配置保存在 `%LOCALAPPDATA%\PenguinPet\settings.json`，沿用该目录名以兼容旧设置。保存的偏好包括大小、不透明度、位置、置顶、特效和语言；隐藏及穿透状态在下次启动时重置。程序不会安装后台服务，也不会自动设置开机启动。
+程序离线运行，临时的按键状态和鼠标坐标只用于动画。不会记录键入文字、读取剪贴板或上传数据。偏好保存在本机。
 
-锁屏、UAC 安全桌面及部分受保护应用中可能无法响应输入。角色使用分层精灵与纹理变形。迷你键盘展示了实体键盘上的常用键位。
+[提交问题或建议](https://github.com/mioyui20/gugugaga-gugutata-pet/issues/new/choose)。遇到问题时，请附上桌宠版本、Windows 版本和具体现象。
 
-## 构建与测试
-
-构建前请关闭正在运行的宠物。在项目目录中打开 PowerShell：
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\build.ps1
-powershell -NoProfile -ExecutionPolicy Bypass -File .\test.ps1
-```
-
-构建使用 Windows 自带的 .NET Framework C# 编译器，将角色纹理嵌入 EXE。构建时传入 `-VideoModel:$false` 可使用上一套造型。脚本也会生成 `PenguinPet.exe`，方便旧快捷方式继续使用。
-
-自检覆盖窗口可见性、钩子注册、按键状态、表情、趴睡与唤醒、暂停、穿透、缩放、隐藏、位置恢复和英中双语界面，并在 `test-output` 生成姿态预览。自检不会向其他应用注入键鼠输入。手动检查全局联动时，可在文本编辑器里打字，并移动鼠标、点击、滚动，观察宠物的回应。
-
-## 打包
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\package.ps1
-```
-
-`dist` 中将生成源码包、Windows 便携包及 SHA-256 校验文件。源码包包含代码、运行所需的生成素材、素材生成记录、两份 README、构建/测试/打包脚本及预览图；不包含本机配置、参考附件、测试输出和旧版程序。
-
-## 源码结构
-
-```text
-src/PenguinPet.cs       窗口、输入状态、设置及托盘控制
-src/DeskScene.cs        透视桌面和手臂绘制
-src/CompanionMotion.cs  表情、呼吸、趴睡和唤醒动作
-src/Ui.cs               中英文界面文字
-assets/                 运行所需图集与素材生成记录
-docs/                   预览图
-build.ps1               编译程序
-test.ps1                运行自检
-package.ps1             生成源码包与便携包
-```
-
-## 建议与反馈
-
-欢迎提出功能建议、外观意见和问题反馈。前往项目的 [Issues](https://github.com/mioyui20/gugugaga-gugutata-pet/issues/new/choose) 页面，选择 **功能建议 / Feature request** 或 **问题反馈 / Bug report**。项目已附上 `.github/ISSUE_TEMPLATE` 中英双语表单，方便统一收集、整理和跟进意见。
-
-提交功能建议时，建议说明：
-
-- **想改进什么：** 比如动作、表情、外观、交互、无障碍体验等。
-- **使用场景与预期效果：** 什么时候会用到，希望宠物如何表现。
-- **优先程度：** 必需功能还是体验优化；可以附草图或参考图。
-
-反馈问题时，请提供设置页中的软件版本、Windows 版本、复现步骤、预期与实际表现，以及可选的截图或短视频。分享前请去除其中的私人信息。
-
-提交前可以先搜索已有 Issue，相似想法可在原讨论中补充。反馈将作为后续更新的参考，按实际需求、描述清晰程度和实现工作量综合考虑。
-
-## 致谢
-
-交互与姿势参考 [ayangweb/BongoCat](https://github.com/ayangweb/BongoCat)。本项目是独立的 Windows 实现，不包含 BongoCat 源码或 Live2D 资源。
+交互和姿势参考 [BongoCat](https://github.com/ayangweb/BongoCat)。

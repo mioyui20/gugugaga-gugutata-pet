@@ -1,102 +1,39 @@
 # gugugaga pet
 
-English | [简体中文](README.zh-CN.md)
+[简体中文](README.zh-CN.md) · [Download for Windows](https://github.com/mioyui20/gugugaga-gugutata-pet/releases/latest/download/gugugaga-pet-Windows-x64.zip)
 
-[Download Windows v1.2.0](https://github.com/mioyui20/gugugaga-gugutata-pet/releases/download/v1.2.0/gugugaga-pet-Windows-x64.zip) · [All releases](https://github.com/mioyui20/gugugaga-gugutata-pet/releases) · [Suggestions & feedback](https://github.com/mioyui20/gugugaga-gugutata-pet/issues/new/choose)
+Guga (咕咕嘎嘎) is a little companion in a penguin suit that sits on your Windows desktop. It taps its keyboard as you type, moves its own mouse along with yours, and rests its head on the desk when you step away.
 
-Meet **guga**, known as **咕咕嘎嘎** in Chinese, a desktop companion in a penguin suit for Windows. Guga taps along as you type, follows your mouse, and takes a nap when you step away.
+![Guga at its miniature keyboard](docs/preview.png)
 
-![guga at the keyboard](docs/preview.png)
+## Start using it
 
-## Features
+Requires **64-bit Windows 10 or 11** and **.NET Framework 4.8**. The ZIP is portable and runs with standard user permissions.
 
-- **Typing companion:** the keyboard paw moves toward the corresponding key, presses down, and lifts on release. Common letter, number, punctuation, and modifier keys light up on the miniature keyboard.
-- **Mouse companion:** the other paw follows the pointer across a small mouse pad. Mouse buttons and scrolling have their own feedback; typing and mouse movement work together.
-- **Expressive reactions:** calm, blinking, happy, focused, sleepy, and surprised expressions, with gentle breathing and head movement.
-- **A proper little nap:** after 45 seconds without input, guga brings both forearms together on the desk and lowers its head onto them. Slow breathing and small nods continue until new input wakes guga.
-- **Desktop controls:** drag to move, click to pet, and use the right-click menu for size, opacity, always-on-top, click-through, hiding, and position recovery.
-- **English and Chinese:** open Settings and click the visible **中文** or **English** button at the top, or choose **语言 / Language → English / 中文** in the right-click menu. The selected language is remembered on normal exit.
+1. Download and extract `gugugaga-pet-Windows-x64.zip`.
+2. Open `gugugaga pet.exe` and try typing or moving your mouse.
+3. Right-click Guga or its tray icon to open **设置与使用说明**. Click **English** at the top to switch from the default Chinese interface.
 
-![guga taking a nap](docs/sleep.png)
+To update, quit Guga from the system tray, then extract and run the new copy. [All releases](https://github.com/mioyui20/gugugaga-gugutata-pet/releases)
 
-## Run on Windows
-
-Requires **64-bit Windows 10 or 11** with **.NET Framework 4.8**. No Python, Node.js, installer, or administrator privileges are needed.
-
-1. Extract `gugugaga-pet-Windows-x64.zip`.
-2. Run `gugugaga pet.exe`.
-3. Right-click the pet or its tray icon for controls. A fresh installation starts in Chinese. Open **设置与使用说明** and click the **English** button at the top; settings, menus, and tray text update immediately.
-
-To upgrade, exit the previous copy and run the EXE from the new portable package. **v1.2.0** appears at the top of Settings.
+## What you can do
 
 | Action | Result |
 | --- | --- |
-| Drag the pet | Move the window |
-| Click the pet | Pet guga and see a smile |
-| Right-click | Open controls and language selection |
-| **Let guga nap** | Preview the nap; new input wakes guga |
-| Double-click the tray icon | Show and pet guga |
-| Run the EXE again | Show the existing pet, disable click-through, and restore its position |
+| Type, click or scroll | Guga reacts with its paws and miniature keyboard or mouse |
+| Wait 45 seconds | Guga takes a nap. Your next input wakes it |
+| Drag or click Guga | Move it around or pet it to see a smile |
+| Right-click | Change size, opacity, always-on-top, language or visibility, or preview a nap |
+| Turn on click-through | Click the window underneath Guga. Turn it off from the tray |
 
-Size ranges from 160 to 440 px; opacity ranges from 35% to 100%. Restore click-through from the tray menu. The tray icon may be inside the hidden-icons area.
+![Guga taking a nap](docs/sleep.png)
 
-## Privacy and settings
+If Guga is hidden or out of reach, use its system tray menu. The icon may be in the hidden icons area. Opening the EXE again can also show Guga and restore its position.
 
-The app works offline and makes no network requests. Windows input hooks supply transient key codes, pressed/released states, and pointer coordinates to animate the pet. These are not converted into typed text, logged, or uploaded. Clipboard contents are not read, and input events are always passed on to other applications.
+## Privacy and feedback
 
-Session counters exist only in memory. Settings are stored in `%LOCALAPPDATA%\PenguinPet\settings.json`; the folder name is retained for compatibility. Saved preferences include size, opacity, position, always-on-top, visual effects, and language. Hidden and click-through states reset on the next launch. The app does not install a background service or enable startup automatically.
+Guga works offline. It uses temporary key states and mouse coordinates for animation. It does not record typed text, read the clipboard or upload data. Settings are saved on your PC.
 
-Input reactions may be unavailable on the lock screen, the UAC secure desktop, or in protected applications. The model is a layered sprite rig with textured arm deformation, rather than a Live2D model. The miniature keyboard displays a subset of a full physical keyboard.
+[Report a problem or suggest a feature](https://github.com/mioyui20/gugugaga-gugutata-pet/issues/new/choose). For a problem, include the app version, your Windows version and what happened.
 
-## Build and test
-
-Close the running pet before rebuilding. In the project directory, run:
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\build.ps1
-powershell -NoProfile -ExecutionPolicy Bypass -File .\test.ps1
-```
-
-The build uses the Windows .NET Framework C# compiler and embeds the character textures in the executable. Pass `-VideoModel:$false` to build with the previous design. `PenguinPet.exe` is also generated as a compatibility entry point for older shortcuts.
-
-The self-test checks window visibility, hook registration, key states, expressions, resting and wake transitions, pause, click-through, resizing, hiding, recovery, and both languages. Pose previews are saved in `test-output`. It does not inject input into other apps. To check global interaction manually, type in a text editor, move the pointer, click, and scroll while watching the pet.
-
-## Package
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\package.ps1
-```
-
-This produces source and Windows portable archives under `dist`, plus SHA-256 checksums. The source package includes code, required generated assets, asset provenance, both READMEs, build/test/package scripts, and previews. Local settings, reference attachments, test output, and older binaries are excluded.
-
-## Source layout
-
-```text
-src/PenguinPet.cs       Window, input state, settings, tray controls
-src/DeskScene.cs        Perspective desktop and textured arm rendering
-src/CompanionMotion.cs  Expressions, breathing, dozing and wake transitions
-src/Ui.cs               English / Chinese interface text
-assets/                 Required texture atlases and generation notes
-docs/                   Preview images
-build.ps1               Compile the executable
-test.ps1                Run the self-test
-package.ps1             Create source and portable archives
-```
-
-## Suggestions and feedback
-
-Ideas and bug reports are welcome. Open [Issues](https://github.com/mioyui20/gugugaga-gugutata-pet/issues/new/choose) and choose **Feature request / 功能建议** or **Bug report / 问题反馈**. Bilingual forms are included in `.github/ISSUE_TEMPLATE` to make feedback easier to collect and review.
-
-For a feature suggestion, describe:
-
-- What you would like to change: gestures, expressions, appearance, interaction, accessibility, or something else.
-- When it would help, and what the result should look or feel like.
-- Whether it is essential or a nice-to-have; a sketch or reference can help.
-
-For a bug, include the version shown in Settings, your Windows version, the steps to reproduce it, the expected and actual behavior, and an optional screenshot or short recording. Remove private information before sharing screenshots.
-
-Before opening a new issue, check existing reports. Related ideas can be added to an existing discussion. Reports help guide future updates; feature requests are considered according to usefulness, clarity, and implementation effort.
-
-## Credits
-
-Interaction and posture are inspired by [ayangweb/BongoCat](https://github.com/ayangweb/BongoCat). This is an independent Windows implementation; it does not include BongoCat source code or Live2D assets.
+Interaction and posture are inspired by [BongoCat](https://github.com/ayangweb/BongoCat).
